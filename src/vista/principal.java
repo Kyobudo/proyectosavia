@@ -13,13 +13,13 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.*;
 import java.awt.*;
 
-public class busqueda extends JFrame {
+public class principal extends JFrame {
 
     DefaultTableModel mt_preproductivo = new DefaultTableModel();
     DefaultTableModel mt_somosmas = new DefaultTableModel();
     DefaultTableModel mt_integra = new DefaultTableModel();
 
-    public busqueda() {
+    public principal() {
         initComponents();
         
         //Se instancia el contenido de la tabla preproductivo
@@ -34,7 +34,7 @@ public class busqueda extends JFrame {
             TableColumn column = modelo_columna_preproductivo.getColumn(i);
             column.setPreferredWidth(tamamo_colum_tablapreprocuntivo[i]);
             column.setHeaderRenderer(new CustomTableHeaderRenderer());//se llama el color
-        }       
+        }      
         
         //Se instancia el contenido para la tabla somos mas
         String[] arreglo_column_somosmas={"id","nit_ips","Factuta","Valor_glosa_inicial"
@@ -61,8 +61,7 @@ public class busqueda extends JFrame {
             TableColumn column = modelo_columna_integra.getColumn(i);
             column.setPreferredWidth(tamamo_colum_tablaintegra[i]);
             column.setHeaderRenderer(new CustomTableHeaderRenderer());
-        }
-        
+        }      
 
         btnbuscar.addActionListener(new ActionListener() {//activa la accion en boton buscar
 
@@ -70,10 +69,10 @@ public class busqueda extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 buscarDatosProductivo();
                 busquedaDatosSomosMas();
+                busquedaDatosintegra();
             }
         });
     }
-
     public class CustomTableHeaderRenderer extends DefaultTableCellRenderer {//esta se llama para ponerle color de fondo y encabezado a la tabla integra
 
         @Override
@@ -92,7 +91,6 @@ public class busqueda extends JFrame {
             return this;
         }
     }
-
     public void buscarDatosProductivo() {//aqui se busca los datos de la factura en la base de datos preproductivo
         String numeroFactura = txtfnumero_factura.getText();
         String nit = txtfnit.getText();
@@ -101,7 +99,6 @@ public class busqueda extends JFrame {
             JOptionPane.showMessageDialog(this, "Por favor ingrese todos los datos", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
         Connection con = conexiones_a_BD.ConexionPreProductivo.getConnection();//conecta a la BD
         if (con != null) {
             String query = "SELECT * FROM cm_facturas WHERE numero_facturado = ? AND nit = ?";
@@ -141,16 +138,15 @@ public class busqueda extends JFrame {
                     System.out.println("Número de filas en la tabla después de agregar datos: " + mt_preproductivo.getRowCount());//impresiones para validar cuantas columnas cuenta
                     System.out.println("Número de columnas en la tabla después de agregar datos: " + mt_preproductivo.getColumnCount());
                 } else {
-                    JOptionPane.showMessageDialog(this, "No se encontraron resultados", "Resultado", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "No se encontraron resultados en BD Pre productiva", "Resultado", JOptionPane.INFORMATION_MESSAGE);
                 }
 
             } catch (SQLException e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error al realizar la consulta", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al realizar la consulta en BD Pre productiva ", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }
-    
+    }    
 
     public void busquedaDatosSomosMas() {//aqui se busca los datos de la factura en la base de datos somos mas
         String numeroFactura = txtfnumero_factura.getText();
@@ -180,77 +176,73 @@ public class busqueda extends JFrame {
                             rs.getString("factura"),
                             rs.getDouble("valor_glosa_inicial"),
                             rs.getString("estado_final_auditoria"),
-                            rs.getDouble("valor_factura")                      
-                            
-                           
-
+                            rs.getDouble("valor_factura")    
                         };
                         mt_somosmas.addRow(rowData);
                     } while (rs.next());
                     System.out.println("Número de filas en la tabla después de agregar datos: " + mt_somosmas.getRowCount());
                     System.out.println("Número de columnas en la tabla después de agregar datos: " + mt_somosmas.getColumnCount());
                 } else {
-                    JOptionPane.showMessageDialog(this, "No se encontraron resultados", "Resultado", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "No se encontraron resultados en BD Somos +", "Resultado", JOptionPane.INFORMATION_MESSAGE);
                 }
-
             } catch (SQLException e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error al realizar la consulta", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Error al realizar la consulta en BD Somos +", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }   
+    
+public void busquedaDatosintegra() {
+    String numeroFactura = txtfnumero_factura.getText();
+    String nit = txtfnit.getText();
+
+    if (numeroFactura.isEmpty() || nit.isEmpty()) {           
+        return;
     }
-    
-    
-    public void busquedaDatosintegra() {//aqui se busca los datos de la factura en la base de datos integra
-        String numeroFactura = txtfnumero_factura.getText();
-        String nit = txtfnit.getText();
+    Connection conexion_integra = conexiones_a_BD.conexion_integra.getConnection();
+    if (conexion_integra != null) {
+        String query = "SELECT * FROM `dbo.FACTURAS_CUENTAS_MEDICAS` WHERE 'NUMERO FACTURA' = ? AND 'NIT IPS' = ?";
+        try (PreparedStatement pst = conexion_integra.prepareStatement(query)) {
+            pst.setString(1, numeroFactura);
+            pst.setString(2, nit);
+            ResultSet rs = pst.executeQuery();
 
-        if (numeroFactura.isEmpty() || nit.isEmpty()) {           
-            return;
-        }
-
-        Connection conexion_integra = conexiones_a_BD.conexionSomos.getConnection();//conecta a la BD
-        if (conexion_integra != null) {
-            String query = "SELECT * FROM FACTURAS_CUENTAS_MEDICAS WHERE NUMERO FACTURA = ? AND NIT IPS = ?";
-            try ( PreparedStatement pst = conexion_integra.prepareStatement(query)) {
-                pst.setString(1, numeroFactura);
-                pst.setString(2, nit);
-                ResultSet rs = pst.executeQuery();
-
-                mt_somosmas.setRowCount(0);//limpia las filas de la tabla
-                //System.out.println( numeroFactura+nit);
-                if (rs.next()) {
-                    do {
-
-                        Object[] rowData = {
-                            rs.getInt("id"),
-                            rs.getInt("nit_ips"),
-                            rs.getString("factura"),
-                            rs.getDouble("valor_glosa_inicial"),
-                            rs.getString("estado_final_auditoria"),
-                            rs.getDouble("valor_factura")                      
-                            
-                                
-                                //{"NUM_RADICA","NIT_IPS","RAZON SOCIAL","NUMERO_FACTURA"
-               // , "FECHA_FACTURA","VALOR_FACTURA","VALOR_PAGADO","VALOR_GLOSA","VALOR_REGISTRTADO","VALOR_COPAGO","VALOR_DESCUENTO",
-                //"OBSERVACION RADICACION","ESTADO DE FACTURA","MOTIVO DE DEVOLUCION","VALOR_NOTA_DEBITO","VALOR_NOTA_CREDITO"};
-                           
-
-                        };
-                        mt_somosmas.addRow(rowData);
-                    } while (rs.next());
-                    System.out.println("Número de filas en la tabla después de agregar datos: " + mt_somosmas.getRowCount());
-                    System.out.println("Número de columnas en la tabla después de agregar datos: " + mt_somosmas.getColumnCount());
-                } else {
-                    JOptionPane.showMessageDialog(this, "No se encontraron resultados", "Resultado", JOptionPane.INFORMATION_MESSAGE);
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error al realizar la consulta", "Error", JOptionPane.ERROR_MESSAGE);
+            mt_integra.setRowCount(0);
+            if (rs.next()) {
+                do {
+                    Object[] rowData = {
+                        rs.getInt("NUM_RADICA"),
+                        rs.getString("NIT IPS"),
+                        rs.getString("RAZON SOCIAL"), 
+                        rs.getString("NUMERO FACTURA"),
+                        rs.getString("FECHA FACTURA"),
+                        rs.getDouble("VALOR FACTURA"),
+                        rs.getDouble("VALOR PAGADO"),
+                        rs.getDouble("VALOR GLOSA"),
+                        rs.getDouble("VALOR REGISTRADO"),
+                        rs.getDouble("VALOR COPAGO"),
+                        rs.getDouble("VALOR DESCUENTO"),
+                        rs.getString("OBSERVACION RADICACION"),  
+                        rs.getString("ESTADO DE LA FACTURA"),
+                        rs.getString("MOTIVO DEVOLUCION"),
+                        rs.getDouble("VALOR_NOTA_DEBITO"),
+                        rs.getDouble("VALOR_NOTA_CREDITO")
+                    };
+                    mt_integra.addRow(rowData);
+                } while (rs.next());
+                System.out.println("Número de filas en la tabla después de agregar datos: " + mt_integra.getRowCount());
+                System.out.println("Número de columnas en la tabla después de agregar datos: " + mt_integra.getColumnCount());
+            } else {
+                JOptionPane.showMessageDialog(this, "No se encontraron resultados en BD Integra", "Resultado", JOptionPane.INFORMATION_MESSAGE);
             }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al realizar la consulta en BD Integra", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+}
+
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -442,11 +434,14 @@ public class busqueda extends JFrame {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 835, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(992, Short.MAX_VALUE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(jLabel2))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 852, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(956, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
