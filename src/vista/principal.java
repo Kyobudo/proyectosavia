@@ -42,6 +42,7 @@ public class principal extends JFrame {
         }
 
         //Se crea el contenido para la tabla integra    
+        
         int[] tamamo_colum_tablaintegra = {150, 150, 150, 150, 150, 150, 150, 100, 150, 200, 200, 200, 200, 200, 200, 200};//tamaño de las columnas
         TableColumnModel modelo_columna_integra = tableintegra.getColumnModel();
         for (int i = 0; i < tamamo_colum_tablaintegra.length; i++) {
