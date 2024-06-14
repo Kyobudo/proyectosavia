@@ -15,25 +15,37 @@ import javax.swing.table.*;
 import java.awt.*;
 import Getset.GetSet;
 
-public class principal extends JFrame {
+public class principal1 extends JFrame {
 
-    DefaultTableModel mt_preproductivo = new DefaultTableModel();//se instancian los modelos de tabla para cada una 
+    DefaultTableModel mt_preproductivo = new DefaultTableModel();
     DefaultTableModel mt_somosmas = new DefaultTableModel();
     DefaultTableModel mt_integra = new DefaultTableModel();
-
-    public principal() {
+    JTable table_preproductivo;
+    public principal1() {
         initComponents();
         
-        //int[] tamamo_colum_tablapreprocuntivo ={100, 150, 100, 100, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150};//tamaño de las columnas
-        TableColumnModel modelo_columna_preproductivo = tablepreproductivo.getColumnModel();
-        int cantidadColumsProductivo=18;
-        for (int i = 0; i < cantidadColumsProductivo; i++) {
-            TableColumn column = modelo_columna_preproductivo.getColumn(i);
-            //column.setPreferredWidth(tamamo_colum_tablapreprocuntivo[i]);
-            column.setHeaderRenderer(new CustomTableHeaderRenderer());//se llama el color
-        }
+       
         
-        int[] tamamo_colum_tablasomosmas = {100, 150, 150, 150, 150, 150};//tamaño de las columnas
+
+        // Configuración de la tabla preproductivo
+        String[] arreglo_colunm_preproductivo = {"id", "cm_rips_cargas_id", "nit", "ips", "Numero_facturado", "Fecha de prestacion", "Fecha_radicacion",
+            "Valor pendiente", "Valor inicial glosa", "tipo auditoria", "valor factura", "valor pagado factura", "Valor copago", "Valor bruto", "Cuota modetadora", "estado de factura",
+            "numero de contrato", "Fecha de creacion"};
+        mt_preproductivo.setColumnIdentifiers(arreglo_colunm_preproductivo);
+        tablepreproductivo.setModel(mt_preproductivo);
+        int[] tamamo_colum_tablapreprocuntivo = {100, 150, 100, 100, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150};
+        TableColumnModel modelo_columna_preproductivo = tablepreproductivo.getColumnModel();
+        for (int i = 0; i < tamamo_colum_tablapreprocuntivo.length; i++) {
+            TableColumn column = modelo_columna_preproductivo.getColumn(i);
+            column.setPreferredWidth(tamamo_colum_tablapreprocuntivo[i]);
+            column.setHeaderRenderer(new CustomTableHeaderRenderer());
+        }
+
+        // Configuración de la tabla somos mas
+        String[] arreglo_column_somosmas = {"id", "nit_ips", "Factuta", "Valor_glosa_inicial", "estado_final_auditoria", "valor_factura"};
+        mt_somosmas.setColumnIdentifiers(arreglo_column_somosmas);
+        tablesomosmas.setModel(mt_somosmas);
+        int[] tamamo_colum_tablasomosmas = {100, 150, 150, 150, 150, 150};
         TableColumnModel modelo_columna_somosmas = tablesomosmas.getColumnModel();
         for (int i = 0; i < tamamo_colum_tablasomosmas.length; i++) {
             TableColumn column = modelo_columna_somosmas.getColumn(i);
@@ -41,106 +53,64 @@ public class principal extends JFrame {
             column.setHeaderRenderer(new CustomTableHeaderRenderer());
         }
 
-        //Se crea el contenido para la tabla integra    
-        int[] tamamo_colum_tablaintegra = {150, 150, 150, 150, 150, 150, 150, 100, 150, 200, 200, 200, 200, 200, 200, 200};//tamaño de las columnas
+        // Configuración de la tabla integra
+        String[] arreglo_column_integra = {"NUM_RADICA", "NIT_IPS", "RAZON SOCIAL", "NUMERO_FACTURA", "FECHA_FACTURA", "VALOR_FACTURA", "VALOR_PAGADO", "VALOR_GLOSA", "VALOR_REGISTRTADO", "VALOR_COPAGO", "VALOR_DESCUENTO",
+            "OBSERVACION RADICACION", "ESTADO DE FACTURA", "MOTIVO DE DEVOLUCION", "VALOR_NOTA_DEBITO", "VALOR_NOTA_CREDITO"};
+        mt_integra.setColumnIdentifiers(arreglo_column_integra);
+        tableintegra.setModel(mt_integra);
+        //int[] tamamo_colum_tablaintegra = {150, 150, 150, 150, 150, 150, 150, 100, 150, 200, 200, 200, 200, 200, 200, 200};
         TableColumnModel modelo_columna_integra = tableintegra.getColumnModel();
-        for (int i = 0; i < tamamo_colum_tablaintegra.length; i++) {
+        int prueba =16;
+        for (int i = 0; i < prueba; i++) {
             TableColumn column = modelo_columna_integra.getColumn(i);
-            column.setPreferredWidth(tamamo_colum_tablaintegra[i]);
+           // column.setPreferredWidth(prueba[i]);
             column.setHeaderRenderer(new CustomTableHeaderRenderer());
         }
+        
+        
+        
 
-        btnbuscar.addActionListener(new ActionListener() {//activa la accion en boton buscar
-
+        btnbuscar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 String nit = txtfnit.getText();
                 String numeroFactura = txtfnumero_factura.getText();
 
-                if (numeroFactura.isEmpty() || nit.isEmpty()) {//mensaje en caso de que no ingresen datos para la busqueda
-                    JOptionPane.showMessageDialog(principal.this, "Por favor ingrese todos los datos", "Error", JOptionPane.ERROR_MESSAGE);
+                if (numeroFactura.isEmpty() || nit.isEmpty()) {
+                    JOptionPane.showMessageDialog(principal1.this, "Por favor ingrese todos los datos", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                GetSet busqueda = new GetSet();//se guarda el numero de la factura y el nit en la clase GetSet
+                GetSet busqueda = new GetSet();
                 busqueda.setNit(nit);
                 busqueda.setNumero_factura(numeroFactura);
-                
-                buscarDatosProductivo(numeroFactura, nit);//se llama buscar datos en la bd preproductiva y se le envian los argumentos para la busqueda
-                busquedaDatosSomosMas(numeroFactura, nit);//se llama buscar datos en la bd somos + y se le envian los argumentos para la busqueda
-                busquedaDatosintegra(numeroFactura, nit);//se llama buscar datos en la bd integra y se le envian los argumentos para la busqueda
+
+                Connection con = conexionesBD.ConexionPreProductivo.getConnection();
+
+                DatosProductivoFetcher fetcher = new DatosProductivoFetcher();
+                fetcher.buscarDatosProductivo(mt_preproductivo, numeroFactura, nit, con, principal1.this);
+
+                busquedaDatosSomosMas(numeroFactura, nit);
+                busquedaDatosintegra(numeroFactura, nit);
             }
         });
+        
+        
     }
-    public class CustomTableHeaderRenderer extends DefaultTableCellRenderer {//esta se llama para ponerle color de fondo y encabezado a la tabla integra
 
+public class CustomTableHeaderRenderer extends DefaultTableCellRenderer {
         @Override
-
-        //Con esta se le da color al encabezado y tabla de la primera tabla de preproductivo
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-            // Establece el color de fondo y el color del texto del encabezado de la tabla
-            setBackground(Color.gray); // Cambia el color de fondo aquí
-            setForeground(Color.WHITE); // Cambia el color del texto aquí
-            setFont(new Font("Verdana", Font.BOLD, 12)); // Opcional: cambia la fuente y el tamaño del texto
-
-            setHorizontalAlignment(SwingConstants.CENTER); // Centra el texto horizontalmente
-
+            setBackground(Color.gray);
+            setForeground(Color.WHITE);
+            setFont(new Font("Verdana", Font.BOLD, 12));
+            setHorizontalAlignment(SwingConstants.CENTER);
             return this;
         }
     }
-    
-    public void buscarDatosProductivo(String numeroFactura, String nit) {//aqui se busca los datos de la factura en la base de datos preproductivo
-
-        Connection con = conexionesBD.ConexionPreProductivo.getConnection();//conecta a la BD
-        if (con != null) {
-            String query = "SELECT * FROM cm_facturas WHERE numero_facturado = ? AND nit = ?";
-            try ( PreparedStatement pst = con.prepareStatement(query)) {
-                pst.setString(1, numeroFactura);
-                pst.setString(2, nit);
-                ResultSet rs = pst.executeQuery();
-
-                mt_preproductivo.setRowCount(0);//limpia las filas de la tabla
-                if (rs.next()) {
-                    do {
-                        //busqueda.setPrueba(rs.getString("ips"));
-                        Object[] rowData = {//lista de columnas de la cm_facturas que se necesitan
-                            rs.getInt("id"),
-                            rs.getInt("cm_rips_cargas_id"),
-                            rs.getString("nit"),
-                            rs.getString("ips"),
-                            rs.getString("numero_facturado"),
-                            rs.getString("fecha_prestacion"),
-                            rs.getString("fecha_radicacion"),
-                            rs.getDouble("valor_pendiente_actual"),
-                            rs.getDouble("valor_inicial_glosa"),
-                            rs.getInt("tipo_auditoria"),
-                            rs.getDouble("valor_factura"),
-                            rs.getDouble("valor_pagado_factura"),
-                            rs.getDouble("valor_copago"),
-                            rs.getDouble("valor_bruto"),
-                            rs.getDouble("valor_cuota_moderadora"),
-                            rs.getInt("estado_factura"),
-                            rs.getString("numero_contrato"),
-                            rs.getString("fecha_hora_crea")
-
-                        };
-                        mt_preproductivo.addRow(rowData);
-                    } while (rs.next());
-                    System.out.println("Número de filas en la tabla después de agregar datos: " + mt_preproductivo.getRowCount());//impresiones para validar cuantas columnas cuenta
-                    System.out.println("Número de columnas en la tabla después de agregar datos: " + mt_preproductivo.getColumnCount());//impresiones para validar cuantas columnas cuenta
-                } else {
-                    JOptionPane.showMessageDialog(this, "No se encontraron resultados en BD Pre productiva", "Resultado", JOptionPane.INFORMATION_MESSAGE);
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error al realizar la consulta en BD Pre productiva ", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-    public void busquedaDatosSomosMas(String numeroFactura, String nit) {//aqui se busca los datos de la factura en la base de datos somos mas
+   
+   
+   public void busquedaDatosSomosMas(String numeroFactura, String nit) {//aqui se busca los datos de la factura en la base de datos somos mas
 
         Connection conexionSomos = conexionesBD.ConexionSomos.getConnection();//conecta a la BD
         if (conexionSomos != null) {
@@ -155,7 +125,7 @@ public class principal extends JFrame {
                 if (rs.next()) {
                     do {
 
-                        Object[] rowData = {//columnas en las que se va buscar en la BD
+                        Object[] rowData = {
                             rs.getInt("id"),
                             rs.getInt("nit_ips"),
                             rs.getString("factura"),
@@ -165,8 +135,8 @@ public class principal extends JFrame {
                         };
                         mt_somosmas.addRow(rowData);
                     } while (rs.next());
-                    System.out.println("Número de filas en la tabla después de agregar datos: " + mt_somosmas.getRowCount());//impresiones para validar cuantas columnas cuenta-es para pruebas
-                    System.out.println("Número de columnas en la tabla después de agregar datos: " + mt_somosmas.getColumnCount());//impresiones para validar cuantas columnas cuenta-es para pruebas
+                    System.out.println("Número de filas en la tabla después de agregar datos: " + mt_somosmas.getRowCount());
+                    System.out.println("Número de columnas en la tabla después de agregar datos: " + mt_somosmas.getColumnCount());
                 } else {
                     JOptionPane.showMessageDialog(this, "No se encontraron resultados en BD Somos +", "Resultado", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -177,10 +147,10 @@ public class principal extends JFrame {
         }
     }
 
-    public void busquedaDatosintegra(String numeroFactura, String nit) {//busqueda  de datos solicitados en la BD de integra
+    public void busquedaDatosintegra(String numeroFactura, String nit) {
     Connection conexion_integra = conexionesBD.ConexionIntegra.getConnection();
     if (conexion_integra != null) {
-        String query = "SELECT * FROM dbo.FACTURAS_CUENTAS_MEDICAS WHERE `NUMERO FACTURA` = ? AND `NIT IPS` = ?";//consulta en la BD integra
+        String query = "SELECT * FROM dbo.FACTURAS_CUENTAS_MEDICAS WHERE `NUMERO FACTURA` = ? AND `NIT IPS` = ?";
         try (PreparedStatement pst = conexion_integra.prepareStatement(query)) {
             pst.setString(1, numeroFactura);
             pst.setString(2, nit);
@@ -189,7 +159,7 @@ public class principal extends JFrame {
             mt_integra.setRowCount(0);
             if (rs.next()) {
                 do {
-                    Object[] rowData = {//columnas a las cuales se les va a extraer el dato en la BD de integra
+                    Object[] rowData = {
                         rs.getInt("NUM_RADICA"),
                         rs.getString("NIT IPS"),
                         rs.getString("RAZON SOCIAL"),
@@ -209,8 +179,8 @@ public class principal extends JFrame {
                     };
                     mt_integra.addRow(rowData);
                 } while (rs.next());
-                System.out.println("Número de filas en la tabla después de agregar datos: " + mt_integra.getRowCount());//impresiones para validar cuantas columnas cuenta-es para pruebas
-                System.out.println("Número de columnas en la tabla después de agregar datos: " + mt_integra.getColumnCount());//impresiones para validar cuantas columnas cuenta-es para pruebas
+                System.out.println("Número de filas en la tabla después de agregar datos: " + mt_integra.getRowCount());
+                System.out.println("Número de columnas en la tabla después de agregar datos: " + mt_integra.getColumnCount());
             } else {
                 JOptionPane.showMessageDialog(this, "No se encontraron resultados en BD Integra", "Resultado", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -245,6 +215,8 @@ public class principal extends JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         tablesomosmas = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jPanel5 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -318,17 +290,17 @@ public class principal extends JFrame {
         tablepreproductivo.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         tablepreproductivo.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Id", "cm_rips_cargas_id", "NIT", "IPS", "Numero factura", "Fecha de prestacion", "Fecha radicacion", "Valor pendiente", "Valor inicial glosa", "tipo auditoria", "Valor factura", "Valor pagado factura", "Copago", "Valor bruto", "Cuota moderadora", "Estado de la factura", "Numero de contrato", "Fecha de creacion"
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7", "Title 8", "Title 9", "Title 10", "Title 11", "Title 12", "Title 13", "Title 14", "Title 15", "Title 16", "Title 17", "Title 18", "Title 19"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -342,20 +314,6 @@ public class principal extends JFrame {
         tablepreproductivo.getTableHeader().setResizingAllowed(false);
         tablepreproductivo.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tablepreproductivo);
-        if (tablepreproductivo.getColumnModel().getColumnCount() > 0) {
-            tablepreproductivo.getColumnModel().getColumn(0).setMinWidth(100);
-            tablepreproductivo.getColumnModel().getColumn(0).setPreferredWidth(100);
-            tablepreproductivo.getColumnModel().getColumn(1).setMinWidth(180);
-            tablepreproductivo.getColumnModel().getColumn(1).setPreferredWidth(180);
-            tablepreproductivo.getColumnModel().getColumn(2).setMinWidth(100);
-            tablepreproductivo.getColumnModel().getColumn(2).setPreferredWidth(100);
-            tablepreproductivo.getColumnModel().getColumn(4).setMinWidth(100);
-            tablepreproductivo.getColumnModel().getColumn(4).setPreferredWidth(100);
-            tablepreproductivo.getColumnModel().getColumn(5).setMinWidth(100);
-            tablepreproductivo.getColumnModel().getColumn(5).setPreferredWidth(100);
-            tablepreproductivo.getColumnModel().getColumn(6).setMinWidth(100);
-            tablepreproductivo.getColumnModel().getColumn(6).setPreferredWidth(100);
-        }
 
         jLabel1.setText("Respuestas base de datos preproductiva");
 
@@ -381,8 +339,8 @@ public class principal extends JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(btndetalleglosa)
                 .addGap(24, 24, 24))
         );
@@ -403,7 +361,7 @@ public class principal extends JFrame {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Id", "Nit IPS", "Numero factura", "Valor glosa incial", "Estodo final auditoria", "Valor factura"
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -424,33 +382,40 @@ public class principal extends JFrame {
 
         jButton1.setText("Factura detalles");
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addComponent(jLabel2))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(41, 41, 41)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 855, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(903, Short.MAX_VALUE))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1)
-                .addContainerGap(9, Short.MAX_VALUE))
-        );
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                true, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable1.setColumnSelectionAllowed(true);
+        jTable1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jTable1.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        jTable1.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(jTable1);
+        jTable1.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(0).setMinWidth(200);
+            jTable1.getColumnModel().getColumn(0).setPreferredWidth(200);
+            jTable1.getColumnModel().getColumn(0).setMaxWidth(500);
+            jTable1.getColumnModel().getColumn(1).setResizable(false);
+            jTable1.getColumnModel().getColumn(2).setResizable(false);
+            jTable1.getColumnModel().getColumn(3).setResizable(false);
+            jTable1.getColumnModel().getColumn(3).setPreferredWidth(100);
+        }
 
         jLabel3.setText("Respuestas bases de datos integra");
 
@@ -468,7 +433,7 @@ public class principal extends JFrame {
                 {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Numero radicacion", "Nit IPS", "Razon social", "Numero factura", "Fecha factura", "Valor factura", "Valor pagado", "Valor glosa", "Valor registrado", "Valor copago", "Valor descuento", "Observacion radicacion", "Estado factura", "Motivo devolucion", "Valor nota debito", "Valor nota credito"
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7", "Title 8", "Title 9", "Title 10", "Title 11", "Title 12", "Title 13", "Title 14", "Title 15", "Title 16"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -492,21 +457,64 @@ public class principal extends JFrame {
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 1188, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(25, Short.MAX_VALUE))
+                        .addGap(20, 20, 20)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(36, 36, 36)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 1221, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(1885, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(12, 12, 12)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(9, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(jLabel2))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(jButton1))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 852, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 118, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -519,14 +527,12 @@ public class principal extends JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(24, 24, 24)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(0, 1361, Short.MAX_VALUE)))
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 2464, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 684, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -535,11 +541,9 @@ public class principal extends JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(352, 352, 352))
+                .addContainerGap())
         );
 
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1300, 700));
@@ -554,12 +558,12 @@ public class principal extends JFrame {
         detal.setVisible(true);
     }//GEN-LAST:event_btndetalleglosaActionPerformed
 
-    public static void main(String args[]) {//metodo pricipal
+    public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {
               
-                new principal().setVisible(true);
+                new principal1().setVisible(true);
             }
         });
     }
@@ -577,8 +581,10 @@ public class principal extends JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lblnit;
     private javax.swing.JLabel lblnumero_factura;
     private javax.swing.JTable tableintegra;
