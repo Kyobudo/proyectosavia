@@ -7,29 +7,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
-public class ConexionPreProductivo {
+public class ConexionSomos {
 
     public static Connection getConnection() {
         Connection con = null;
 
-        String bd = "system_pruebas01";
-        String url = "jdbc:mysql://10.250.3.67/system_pruebas01";
+        String bd = "cuentas_medicas";
+        String url = "jdbc:mysql://10.250.2.39/"+bd;
         String user = "sdelgado";
         String password = "Savia.2024*";
-        String driver = "com.mysql.cj.jdbc.Driver";
-        
-        
-        //String bd = "cursos";system_pruebas01
-        //String url = "jdbc:mysql://localhost:3306/";
-        //String user = "root";
-        //String password = "";
-        //String driver = "com.mysql.cj.jdbc.Driver";
+        String driver = "com.mysql.cj.jdbc.Driver";     
+     
 
         try {
             Class.forName(driver);
             con = DriverManager.getConnection(url, user, password);
         } catch (ClassNotFoundException | SQLException e) {
-            Logger.getLogger(ConexionPreProductivo.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ConexionSomos.class.getName()).log(Level.SEVERE, null, e);
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
         return con;

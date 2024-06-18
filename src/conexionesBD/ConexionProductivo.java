@@ -7,28 +7,27 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
-public class ConexionIntegra {
+public class ConexionProductivo {
 
     public static Connection getConnection() {
-        Connection conexionIntegra = null;
+        Connection con = null;
 
-        String bd = "DATOSINTEGRA";
-        String url = "jdbc:mysql://10.250.5.39/"+bd;
+        String bd = "system_pruebas01";
+        String url = "jdbc:mysql://10.250.3.67/system_pruebas01";
         String user = "sdelgado";
-        String password = "2uJO?0/G6;]w";
+        String password = "Savia.2024*";
         String driver = "com.mysql.cj.jdbc.Driver";
 
         try {
             Class.forName(driver);
-            conexionIntegra = DriverManager.getConnection(url, user, password);
+            con = DriverManager.getConnection(url, user, password);
         } catch (ClassNotFoundException | SQLException e) {
-            Logger.getLogger(ConexionIntegra.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(ConexionProductivo.class.getName()).log(Level.SEVERE, null, e);
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
-        return conexionIntegra;
+        return con;
     }
-
-    public static void main(String[] args) {
+     public static void main(String[] args) {
         Connection con = getConnection();
         if (con != null) {
             System.out.println("Conexión exitosa a la base de datos.");
@@ -37,4 +36,6 @@ public class ConexionIntegra {
         }
     }
 }
+
+
 

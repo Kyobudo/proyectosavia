@@ -1,9 +1,7 @@
 package vistasomosmas;
-import vista_productivo.AuditodiaMotivosGlosaProduc;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,29 +12,35 @@ import javax.swing.table.*;
 import java.awt.*;
 import Getset.GetSet;
 
-public class factura_detalles extends javax.swing.JFrame {
-DefaultTableModel mt_factura_detalles = new DefaultTableModel();
+public class FacturaDetalles extends javax.swing.JFrame {
+DefaultTableModel mt_facturaDetalles = new DefaultTableModel();
+GetSet busqueda = new GetSet();
 
-    public factura_detalles() {
-        initComponents();       
+
+    public FacturaDetalles(GetSet busqueda) {
+        initComponents();        
+      
         
-       GetSet busqueda=new GetSet();
-       busqueda.nit=txtfnumero_factura.getText();
-        
+ 
         //Se instancia el contenido de la tabla factura detalle de somos +
         String[] arreglo_colunm_fac_detalles= {"id", "nit ips", "Factura", "Documento afiliado", "Nombre afiliado", "Descripcion tecnologia", "Motivo glosa",
             "Detalle glosa", "Valor glosa inicial"};//llena los encabezados de la tabla con el array
-        mt_factura_detalles.setColumnIdentifiers(arreglo_colunm_fac_detalles);
-        tablefactura_detalles.setModel(mt_factura_detalles);
-        int[] tamamo_colum_tablapreprocuntivo = {150, 150, 150, 150, 200, 200, 200, 200, 200};//tamaño de las columnas
+        mt_facturaDetalles.setColumnIdentifiers(arreglo_colunm_fac_detalles);
+        tablefactura_detalles.setModel(mt_facturaDetalles);
+        int[] tamamo_colum_tablapreprocuntivo = {80, 100, 150, 150, 250, 200, 150, 400, 100};//tamaño de las columnas
         TableColumnModel modelo_columna_fact_detalles= tablefactura_detalles.getColumnModel();
         for (int i = 0; i < tamamo_colum_tablapreprocuntivo.length; i++) {
             TableColumn column = modelo_columna_fact_detalles.getColumn(i);
             column.setPreferredWidth(tamamo_colum_tablapreprocuntivo[i]);
             column.setHeaderRenderer(new CustomTableHeaderRenderer());//se llama el color de encabezado
-        }    
-       
-        
+        }        
+         //se guarda el numero de la factura y el nit en la clase GetSet
+                   
+             String numeroFactura=busqueda.getNumero_factura();
+             String nit=busqueda.getNit();
+                    
+             busquedaDatosSomosMasDetalles(numeroFactura,nit);        
+    
     }
      public class CustomTableHeaderRenderer extends DefaultTableCellRenderer {//esta se llama para ponerle color de fondo y encabezado a la tabla integra
             //Con esta se le da color al encabezado y tabla de la primera tabla de preproductivo
@@ -46,15 +50,57 @@ DefaultTableModel mt_factura_detalles = new DefaultTableModel();
             // Establece el color de fondo y el color del texto del encabezado de la tabla
             setBackground(Color.gray); // Cambia el color de fondo aquí
             setForeground(Color.WHITE); // Cambia el color del texto aquí
-            setFont(new Font("Verdana", Font.BOLD, 12)); // Opcional: cambia la fuente y el tamaño del texto
+            setFont(new Font("Roboto", Font.BOLD, 13)); // Opcional: cambia la fuente y el tamaño del texto
 
             setHorizontalAlignment(SwingConstants.CENTER); // Centra el texto horizontalmente
 
             return this;
         }
      }
+     
+    
 
-   
+     public void busquedaDatosSomosMasDetalles(String numeroFactura, String nit) {//aqui se busca los datos de la factura en la base de datos somos mas
+          System.out.println("3333399"+numeroFactura+nit);
+        Connection conexionSomos = conexionesBD.ConexionSomos.getConnection();//conecta a la BD
+        if (conexionSomos != null) {
+            String query = "SELECT * FROM factura_detalles WHERE factura = ? AND nit_ips = ?";
+            try ( PreparedStatement pst = conexionSomos.prepareStatement(query)) {
+                pst.setString(1, numeroFactura);
+                pst.setString(2, nit);
+                ResultSet rs = pst.executeQuery();
+                System.out.println(numeroFactura+nit+"dddddddddddddddd");
+                mt_facturaDetalles.setRowCount(0);//limpia las filas de la tabla
+
+                if (rs.next()) {
+                    do {
+                            
+                        Object[] rowData = {//columnas en las que se va buscar en la BD
+                            rs.getInt("id"),
+                            rs.getInt("nit_ips"),
+                            rs.getString("factura"),
+                            rs.getString("documento_afiliado"),
+                            rs.getString("nombre_afiliado"),
+                            rs.getString("descripcion_tecnologia"),
+                            rs.getString("motivo_glosa"),
+                            rs.getString("detalle_glosa"),
+                            rs.getInt("valor_glosa_inicial")
+                        };
+                        mt_facturaDetalles.addRow(rowData);
+                       
+                    } while (rs.next());
+                    System.out.println("Número de filas en la tabla después de agregar datos: " + mt_facturaDetalles.getRowCount());//impresiones para validar cuantas columnas cuenta-es para pruebas
+                    System.out.println("Número de columnas en la tabla después de agregar datos: " + mt_facturaDetalles.getColumnCount());//impresiones para validar cuantas columnas cuenta-es para pruebas
+                } else {
+                    JOptionPane.showMessageDialog(this, "No se encontraron resultados en BD Somos +", "Resultado", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error al realizar la consulta en BD Somos +", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -81,6 +127,7 @@ DefaultTableModel mt_factura_detalles = new DefaultTableModel();
             .addGap(0, 74, Short.MAX_VALUE)
         );
 
+        jLabel1.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         jLabel1.setText("Detalles factura Somos +");
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -90,6 +137,17 @@ DefaultTableModel mt_factura_detalles = new DefaultTableModel();
         tablefactura_detalles.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         tablefactura_detalles.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null},
@@ -132,8 +190,8 @@ DefaultTableModel mt_factura_detalles = new DefaultTableModel();
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -152,7 +210,7 @@ DefaultTableModel mt_factura_detalles = new DefaultTableModel();
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(315, Short.MAX_VALUE))
+                .addContainerGap(56, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -173,9 +231,8 @@ DefaultTableModel mt_factura_detalles = new DefaultTableModel();
        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                
-                new factura_detalles().setVisible(true);
-                
+                GetSet busqueda = new GetSet();
+                new FacturaDetalles(busqueda).setVisible(true); 
                
             }
         });

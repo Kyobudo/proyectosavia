@@ -35,7 +35,7 @@ public class AuditodiaMotivosGlosaProduc extends javax.swing.JFrame {
         
         GetSet busqueda = new GetSet();//llama la clase GetSet para pruebas
         String prueba = "210164";//pueba oara resultado
-        busqueda.setCm_detalles_id(prueba);
+        //busqueda.setCm_detalles_id(prueba);
         System.out.println(busqueda.getCm_detalles_id());
         buscarDatos(prueba);
         
@@ -64,7 +64,7 @@ public class AuditodiaMotivosGlosaProduc extends javax.swing.JFrame {
         }
     public void buscarDatos(String numeroFactura) {//aqui se busca los datos de la factura en la base de datos
 
-        Connection con = conexionesBD.ConexionPreProductivo.getConnection();//conecta a la BD
+        Connection con = conexionesBD.ConexionProductivo.getConnection();//conecta a la BD
         if (con != null) {
             String query = "SELECT * FROM cm_auditoria_motivos_glosas WHERE cm_detalles_id = ? ";
             try ( PreparedStatement pst = con.prepareStatement(query)) {
