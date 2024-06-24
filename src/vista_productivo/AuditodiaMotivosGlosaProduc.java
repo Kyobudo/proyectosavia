@@ -36,7 +36,7 @@ public class AuditodiaMotivosGlosaProduc extends javax.swing.JFrame {
         GetSet busqueda = new GetSet();//llama la clase GetSet para pruebas
         String prueba = "210164";//pueba oara resultado
         //busqueda.setCm_detalles_id(prueba);
-        System.out.println(busqueda.getCm_detalles_id());
+       
         buscarDatos(prueba);
         
     }
