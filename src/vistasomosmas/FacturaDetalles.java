@@ -1,4 +1,5 @@
 package vistasomosmas;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
@@ -12,27 +13,29 @@ import java.awt.*;
 import Getset.GetSet;
 
 public class FacturaDetalles extends javax.swing.JFrame {
-DefaultTableModel mt_facturaDetalles;
-GetSet busqueda = new GetSet();
 
+    DefaultTableModel mt_facturaDetalles;
+    GetSet busqueda = new GetSet();
 
     public FacturaDetalles(GetSet busqueda) {
-        initComponents();  
+        initComponents();
         //bucle para aplicarle color a los encabezados y tipo de letra a tabla detalles
-        mt_facturaDetalles =(DefaultTableModel)tableFacturaDetalles.getModel();    
-        TableColumnModel modelo_columna_fact_detalles= tableFacturaDetalles.getColumnModel();
+        mt_facturaDetalles = (DefaultTableModel) tableFacturaDetalles.getModel();
+        TableColumnModel modelo_columna_fact_detalles = tableFacturaDetalles.getColumnModel();
         for (int i = 0; i < 9; i++) {
-            TableColumn column = modelo_columna_fact_detalles.getColumn(i);           
+            TableColumn column = modelo_columna_fact_detalles.getColumn(i);
             column.setHeaderRenderer(new CustomTableHeaderRenderer());//se llama el color de encabezado
-        }        
-         //se guarda el numero de la factura y el nit en la clase GetSet                   
-             String numeroFactura=busqueda.getNumero_factura();
-             String nit=busqueda.getNit();                    
-             busquedaDatosSomosMasDetalles(numeroFactura,nit);//se envian los parametros de busqueda al metodo buscar        
-    
+        }
+        //se guarda el numero de la factura y el nit en la clase GetSet                   
+        String numeroFactura = busqueda.getNumero_factura();
+        String nit = busqueda.getNit();
+        busquedaDatosSomosMasDetalles(numeroFactura, nit);//se envian los parametros de busqueda al metodo buscar        
+
     }
-     public class CustomTableHeaderRenderer extends DefaultTableCellRenderer {//esta se llama para ponerle color de fondo y encabezado a la tabla integra
-            //Con esta se le da color al encabezado y tabla de la primera tabla de preproductivo
+
+    public class CustomTableHeaderRenderer extends DefaultTableCellRenderer {//esta se llama para ponerle color de fondo y encabezado a la tabla integra
+        //Con esta se le da color al encabezado y tabla de la primera tabla de preproductivo
+
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
@@ -45,22 +48,22 @@ GetSet busqueda = new GetSet();
 
             return this;
         }
-     }
-     //metodo para buscar la informacion de la factura el la base de datos
-     public void busquedaDatosSomosMasDetalles(String numeroFactura, String nit) {//aqui se busca los datos de la factura en la base de datos somos mas
-          
+    }
+    //metodo para buscar la informacion de la factura el la base de datos
+
+    public void busquedaDatosSomosMasDetalles(String numeroFactura, String nit) {//aqui se busca los datos de la factura en la base de datos somos mas
+
         Connection conexionSomos = conexionesBD.ConexionSomos.getConnection();//conecta a la BD
         if (conexionSomos != null) {
             String query = "SELECT * FROM factura_detalles WHERE factura = ? AND nit_ips = ?";
             try ( PreparedStatement pst = conexionSomos.prepareStatement(query)) {
                 pst.setString(1, numeroFactura);
                 pst.setString(2, nit);
-                ResultSet rs = pst.executeQuery();               
+                ResultSet rs = pst.executeQuery();
                 mt_facturaDetalles.setRowCount(0);//limpia las filas de la tabla
-
                 if (rs.next()) {
                     do {
-                            
+
                         Object[] rowData = {//columnas en las que se va buscar en la BD
                             rs.getInt("id"),
                             rs.getInt("nit_ips"),
@@ -73,21 +76,31 @@ GetSet busqueda = new GetSet();
                             rs.getInt("valor_glosa_inicial")
                         };
                         mt_facturaDetalles.addRow(rowData);
-                       
+
                     } while (rs.next());
                     System.out.println("Número de filas en la tabla después de agregar datos: " + mt_facturaDetalles.getRowCount());//impresiones para validar cuantas columnas cuenta-es para pruebas
                     System.out.println("Número de columnas en la tabla después de agregar datos: " + mt_facturaDetalles.getColumnCount());//impresiones para validar cuantas columnas cuenta-es para pruebas
                 } else {
                     JOptionPane.showMessageDialog(this, "No se encontraron resultados en BD Somos +, puedes realiazar otra busqueda", "Resultado", JOptionPane.INFORMATION_MESSAGE);
-               
+
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Error al realizar la consulta en BD Somos +", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-        
+
     }
+        public boolean Estado() {
+        boolean estado = true;
+        if (mt_facturaDetalles.getRowCount() > 0) {
+            estado = true;
+        } else {
+            estado = false;
+        }
+        return estado;
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -302,22 +315,22 @@ GetSet busqueda = new GetSet();
     }//GEN-LAST:event_txtNumFacturaActionPerformed
 
     private void btnbuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbuscarActionPerformed
-       String nit = txtfnit.getText();
-       String numeroFactura = txtNumFactura.getText();
-       busquedaDatosSomosMasDetalles( numeroFactura, nit);
+        String nit = txtfnit.getText();
+        String numeroFactura = txtNumFactura.getText();
+        busquedaDatosSomosMasDetalles(numeroFactura, nit);
     }//GEN-LAST:event_btnbuscarActionPerformed
 
     private void jScrollPane1AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jScrollPane1AncestorAdded
-        
+
     }//GEN-LAST:event_jScrollPane1AncestorAdded
 
     public static void main(String args[]) {
-       
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 GetSet busqueda = new GetSet();
-                new FacturaDetalles(busqueda).setVisible(true); 
-               
+                new FacturaDetalles(busqueda).setVisible(true);
+
             }
         });
     }
