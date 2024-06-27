@@ -21,6 +21,6 @@ public class GetSet {
     public void setNit(String nit) {
         this.nit = nit;
     }
-    
+     
     
 }
