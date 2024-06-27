@@ -10,26 +10,22 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.*;
 import java.awt.*;
-import Getset.GetSet;
+
 
 public class FacturaDetalles extends javax.swing.JFrame {
 
     DefaultTableModel mt_facturaDetalles;
-    GetSet busqueda = new GetSet();
 
-    public FacturaDetalles(GetSet busqueda) {
+    public FacturaDetalles() {
         initComponents();
+        setExtendedState(MAXIMIZED_BOTH);
         //bucle para aplicarle color a los encabezados y tipo de letra a tabla detalles
         mt_facturaDetalles = (DefaultTableModel) tableFacturaDetalles.getModel();
         TableColumnModel modelo_columna_fact_detalles = tableFacturaDetalles.getColumnModel();
         for (int i = 0; i < 9; i++) {
             TableColumn column = modelo_columna_fact_detalles.getColumn(i);
             column.setHeaderRenderer(new CustomTableHeaderRenderer());//se llama el color de encabezado
-        }
-        //se guarda el numero de la factura y el nit en la clase GetSet                   
-        String numeroFactura = busqueda.getNumero_factura();
-        String nit = busqueda.getNit();
-        busquedaDatosSomosMasDetalles(numeroFactura, nit);//se envian los parametros de busqueda al metodo buscar        
+        }       
 
     }
 
@@ -57,8 +53,8 @@ public class FacturaDetalles extends javax.swing.JFrame {
         if (conexionSomos != null) {
             String query = "SELECT * FROM factura_detalles WHERE factura = ? AND nit_ips = ?";
             try ( PreparedStatement pst = conexionSomos.prepareStatement(query)) {
-                pst.setString(1, numeroFactura);
-                pst.setString(2, nit);
+                pst.setString(1, nit);
+                pst.setString(2, numeroFactura);
                 ResultSet rs = pst.executeQuery();
                 mt_facturaDetalles.setRowCount(0);//limpia las filas de la tabla
                 if (rs.next()) {
@@ -91,7 +87,8 @@ public class FacturaDetalles extends javax.swing.JFrame {
         }
 
     }
-        public boolean Estado() {
+
+    public boolean Estado() {
         boolean estado = true;
         if (mt_facturaDetalles.getRowCount() > 0) {
             estado = true;
@@ -107,12 +104,7 @@ public class FacturaDetalles extends javax.swing.JFrame {
 
         jPanel4 = new javax.swing.JPanel();
         panelEncabezado = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        txtNumFactura = new javax.swing.JTextField();
-        lblnit = new javax.swing.JLabel();
-        txtfnit = new javax.swing.JTextField();
-        jPanel1 = new javax.swing.JPanel();
-        btnbuscar = new javax.swing.JButton();
+        btn_cerrar = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -130,7 +122,6 @@ public class FacturaDetalles extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1000, 600));
 
         panelEncabezado.setBackground(new java.awt.Color(0, 153, 153));
         panelEncabezado.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)), "Base de datos Somos +", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 1, 12), new java.awt.Color(255, 255, 255))); // NOI18N
@@ -138,84 +129,31 @@ public class FacturaDetalles extends javax.swing.JFrame {
         panelEncabezado.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         panelEncabezado.setPreferredSize(new java.awt.Dimension(1000, 120));
 
-        jLabel1.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Ingrese el numero de factura: ");
-
-        txtNumFactura.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        txtNumFactura.setForeground(new java.awt.Color(102, 102, 102));
-        txtNumFactura.setPreferredSize(new java.awt.Dimension(65, 22));
-        txtNumFactura.addActionListener(new java.awt.event.ActionListener() {
+        btn_cerrar.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        btn_cerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/signo.png"))); // NOI18N
+        btn_cerrar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        btn_cerrar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btn_cerrar.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        btn_cerrar.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        btn_cerrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtNumFacturaActionPerformed(evt);
+                btn_cerrarActionPerformed(evt);
             }
         });
-
-        lblnit.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        lblnit.setForeground(new java.awt.Color(255, 255, 255));
-        lblnit.setText("Ingrese en NIT:");
-
-        txtfnit.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        txtfnit.setForeground(new java.awt.Color(102, 102, 102));
-        txtfnit.setPreferredSize(new java.awt.Dimension(65, 22));
-
-        jPanel1.setBackground(new java.awt.Color(0, 153, 153));
-
-        btnbuscar.setBackground(new java.awt.Color(102, 102, 102));
-        btnbuscar.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        btnbuscar.setForeground(new java.awt.Color(255, 255, 255));
-        btnbuscar.setText("Buscar");
-        btnbuscar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnbuscarActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnbuscar, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(btnbuscar)
-                .addGap(0, 19, Short.MAX_VALUE))
-        );
 
         javax.swing.GroupLayout panelEncabezadoLayout = new javax.swing.GroupLayout(panelEncabezado);
         panelEncabezado.setLayout(panelEncabezadoLayout);
         panelEncabezadoLayout.setHorizontalGroup(
             panelEncabezadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelEncabezadoLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtNumFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addComponent(lblnit, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtfnit, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(162, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelEncabezadoLayout.createSequentialGroup()
+                .addGap(0, 922, Short.MAX_VALUE)
+                .addComponent(btn_cerrar))
         );
         panelEncabezadoLayout.setVerticalGroup(
             panelEncabezadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelEncabezadoLayout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(panelEncabezadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelEncabezadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(txtNumFactura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblnit)
-                        .addComponent(txtfnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addComponent(btn_cerrar)
+                .addGap(0, 29, Short.MAX_VALUE))
         );
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)), "Detalles factura Somos +", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Verdana", 1, 12), new java.awt.Color(102, 102, 102))); // NOI18N
@@ -226,15 +164,6 @@ public class FacturaDetalles extends javax.swing.JFrame {
         jScrollPane1.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         jScrollPane1.setHorizontalScrollBar(null);
         jScrollPane1.setPreferredSize(new java.awt.Dimension(1500, 100));
-        jScrollPane1.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                jScrollPane1AncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
-            }
-        });
 
         tableFacturaDetalles.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         tableFacturaDetalles.setModel(new javax.swing.table.DefaultTableModel(
@@ -310,43 +239,30 @@ public class FacturaDetalles extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtNumFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNumFacturaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtNumFacturaActionPerformed
-
-    private void btnbuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbuscarActionPerformed
-        String nit = txtfnit.getText();
-        String numeroFactura = txtNumFactura.getText();
-        busquedaDatosSomosMasDetalles(numeroFactura, nit);
-    }//GEN-LAST:event_btnbuscarActionPerformed
-
-    private void jScrollPane1AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jScrollPane1AncestorAdded
-
-    }//GEN-LAST:event_jScrollPane1AncestorAdded
+    private void btn_cerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cerrarActionPerformed
+        int HIDE_ON_CLOSE1 = FacturaDetalles.HIDE_ON_CLOSE;
+        if (HIDE_ON_CLOSE1>0) {
+            hide();
+        }
+    }//GEN-LAST:event_btn_cerrarActionPerformed
 
     public static void main(String args[]) {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                GetSet busqueda = new GetSet();
-                new FacturaDetalles(busqueda).setVisible(true);
+                new FacturaDetalles().setVisible(true);
 
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnbuscar;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton btn_cerrar;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     public javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JLabel lblnit;
     private javax.swing.JPanel panelEncabezado;
     private javax.swing.JTable tableFacturaDetalles;
-    private javax.swing.JTextField txtNumFactura;
-    private javax.swing.JTextField txtfnit;
     // End of variables declaration//GEN-END:variables
 }
